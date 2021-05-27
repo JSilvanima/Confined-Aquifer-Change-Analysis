@@ -20,7 +20,6 @@ library(FDEPgetdata)
 library(spsurvey)
 library(sf)
 library(ggplot2)
-library(sqldf)
 library(lubridate)
 
 # Run function of FDEPgetdata package which pulls exclusion data.
@@ -31,7 +30,7 @@ library(lubridate)
 #  create 3 data frames: 1) A data frame (Exclusions) containing all well evaluations 
 #  for the periods 2009, 2010, 2011, 2018, 2019, 2020. 2) A data frame (well_removals) containing all 
 #  wells evaluated for these time periods which are no longer included in the 
-#  2020 traget population. 3) A data frame (SiteEvaluations) containing the wells 
+#  2020 target population. 3) A data frame (SiteEvaluations) containing the wells 
 #  which were evaluated and present in the well list frame for the most recent 
 #  year evaluated.
 #
@@ -349,6 +348,9 @@ round(addmargins(tmp), 1)
 
 names(dsgn_sf)
 
+# Need to remove geometry column because function sqldf does not handle geometry
+#  column type.
+
 dsgn_sf <- st_set_geometry(dsgn_sf, NULL)
 
 # Now need to remove all wells which are no longer in the target population 
@@ -433,17 +435,17 @@ addmargins(table(CA_WQ$SAMPLE_TYPE, CA_WQ$MATRIX, useNA = 'ifany'))
 # BLANK               0   0
 # EQUIPMENT BLANK     0   0
 # FIELD BLANK         0   0
-# PRIMARY           652 652
-# Sum               652 652
+# PRIMARY           651 651
+# Sum               651 651
 
 # Determine number of wells sampled in each time period
 
 addmargins(table(CA_WQ$time_period, CA_WQ$MATRIX, useNA = 'ifany'))
 
-#      WATER Sum
-# 1     301 301
+#     WATER Sum
+# 1     300 300
 # 2     351 351
-# Sum   652 652
+# Sum   651 651
 
 # Look at weight sums the two time periods.
 
@@ -452,9 +454,9 @@ tmp[is.na(tmp)] <- 0
 round(addmargins(tmp), 1)
 
 #     ZONE 1 ZONE 2 ZONE 3 ZONE 4 ZONE 5 ZONE 6    Sum
-# 1   3397.3  165.1  491.1  532.6  135.5    4.9 4726.5
+# 1   3397.3  162.0  491.1  532.6  135.5    4.9 4723.3
 # 2   2534.1  834.4  547.2  429.6  103.9   21.2 4470.4
-# Sum 5931.4  999.5 1038.3  962.2  239.4   26.1 9196.9
+# Sum 5931.4  996.4 1038.3  962.2  239.4   26.1 9193.7
 
 # The weights do not differ by much, therefore no further weight adjustments necessary.
 
@@ -726,8 +728,8 @@ CategorypH <- change.analysis(sites=mysites, subpop=mysubpop, design=mydsgn,
 
 CategorypH
 
-write.csv(CategorypH$contsum_mean,file='pHCondMeanC1C3.csv')
-write.csv(CategorypH$contsum_median,file='pHCondMedianC1C3.csv')
+write.csv(CategorypH$contsum_mean,file='pHcontsumMeanC1C3.csv')
+write.csv(CategorypH$contsum_median,file='pHcontsumMedianC1C3.csv')
 
 
 # Dissolved Oxygen
@@ -747,7 +749,7 @@ CategoryDO <- change.analysis(sites=mysites, subpop=mysubpop, design=mydsgn,
 
 CategoryDO
 
-write.csv(CategoryDO$contsum_mean,file='DOCondMeanC1C3.csv')
-write.csv(CategoryDO$contsum_median,file='DOCondMedianC1C3.csv')
+write.csv(CategoryDO$contsum_mean,file='DOcontsumMeanC1C3.csv')
+write.csv(CategoryDO$contsum_median,file='DOcontsumMedianC1C3.csv')
 
 
